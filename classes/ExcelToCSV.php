@@ -31,7 +31,7 @@ class ExceltoCSV
             //if (strpos(strtolower($loadedSheetName), strtolower($sheetName)) !== false) {
             $objWriter->setSheetIndex($sheetIndex);
             try {
-                $objWriter->save(self::UPLOAD_DIR . $locationSwitch . $filename . '.csv');
+                $objWriter->save(self::UPLOAD_DIR . $locationSwitch . $loadedSheetName . '.csv');
             } catch (Exception $e) {
                 return array(false, "Error output file: " . $e->getMessage());
             }

@@ -133,7 +133,46 @@ if (isset($_GET['p']) && $_GET['p'] == "invoiceUpload") {
 
 //Get master CSV filenames
 //Get invoice CSV filenames
-//Filename, Col for Sku, Col for Price and Price allowance. 
+//Filename, Col for Sku, Col for Price and Price allowance.
+
+if (isset($_GET['p']) && $_GET['p'] == "compare") {
+    require_once dirname(__FILE__) . '/classes/Compare.php';
+
+    //print_r($_POST);
+    $masterFile = $_POST['masterList'];
+    $masterSku = $_POST['masterSku'];
+    $masterPrice = $_POST['masterPrice'];
+
+    $invoiceFile = $_POST['invoiceList'];
+    $invoiceSku = $_POST['invoiceSku'];
+    $invoicePrice = $_POST['invoicePrice'];
+
+    $priceThreshold = $_POST['priceThreshold'];
+
+    $compareClass = new Compare();
+    //print("j");
+    $tryCompare = $compareClass->compare($masterFile, $masterSku, $masterPrice, $invoiceFile, $invoiceSku, $invoicePrice);
+    print_r($tryCompare);
+}
+
+$masterLocation = "uploads/master";
+$masterLocationCSV = array();
+$invoiceLocation = "uploads/invoices";
+$invoiceLocationCSV = array();
+
+$counter = 0;
+foreach (scandir($masterLocation) as $item) {
+    if ($item == '.' || $item == '..' || strpos($item, ".csv") === false) continue;
+    $masterLocationCSV["mcsv".$counter] = $item;
+    $counter++;
+}
+
+$counter = 0;
+foreach (scandir($invoiceLocation) as $item) {
+    if ($item == '.' || $item == '..' || strpos($item, ".csv") === false) continue;
+    $invoiceLocationCSV["icsv".$counter] = $item;
+    $counter++;
+}
 
 ?>
 
@@ -180,4 +219,64 @@ if (isset($_GET['p']) && $_GET['p'] == "invoiceUpload") {
     <input type="submit" value="Upload Invoice" name="submit">
 </form>
 
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>?p=compare" method="post" enctype="multipart/form-data">
+    Select Master Price List File:
+    <select name="masterList">
+        <?php foreach($masterLocationCSV as $key => $masterCSV) { ?>
+            <option value="<?= $masterCSV?>"><?= $masterCSV ?></option>
+        <?php } ?>
+    </select>
 
+    <br/>
+    SKU COL
+    <select name="masterSku">
+        <?php for ($i=0; $i<=25; $i++) { ?>
+            <option value="<?= $i;?>"><?= chr(65 + $i);?></option>
+        <?php } ?>
+    </select>
+
+    PRICE COL
+    <select name="masterPrice">
+        <?php for ($i=0; $i<=25; $i++) { ?>
+            <option value="<?= $i;?>"><?= chr(65 + $i);?></option>
+        <?php } ?>
+    </select>
+
+    <br />
+    <br />
+
+    Select Invoice File:
+    <select name="invoiceList">
+        <?php foreach($invoiceLocationCSV as $key => $invoiceCSV) { ?>
+            <option value="<?= $invoiceCSV?>"><?= $invoiceCSV ?></option>
+        <?php } ?>
+    </select>
+
+    SKU COL
+    <select name="invoiceSku">
+        <?php for ($i=0; $i<=25; $i++) { ?>
+            <option value="<?= $i;?>"><?= chr(65 + $i);?></option>
+        <?php } ?>
+    </select>
+
+    PRICE COL
+    <select name="invoicePrice">
+        <?php for ($i=0; $i<=25; $i++) { ?>
+            <option value="<?= $i;?>"><?= chr(65 + $i);?></option>
+        <?php } ?>
+    </select>
+
+    <br/>
+    <br />
+
+    PRICE THRESHOLD (PENCE)
+    <select name="priceThreshold">
+        <?php for ($i=0; $i<=99; $i++) { ?>
+            <option value="<?= $i;?>"><?= $i;?></option>
+        <?php } ?>
+    </select>
+
+    <br/>
+    <br/>
+    <input type="submit" value="Compare" name="submit">
+</form>
