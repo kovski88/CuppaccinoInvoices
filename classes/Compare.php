@@ -8,11 +8,11 @@ class Compare
 
         //Read Master list file
 
-        $masterList = [];
+        $masterList = array();
 
         $handle = fopen("uploads/master/" . $masterFile, "r");
         if ($handle) {
-            $array = [];
+            $array = array();
             while (($line = fgets($handle)) !== false) {
 
                 //CSV line (sku - price)
@@ -41,11 +41,11 @@ class Compare
 
         //Read Invoice
 
-        $invoiceList = [];
+        $invoiceList = array();
 
         $handle = fopen("uploads/invoices/" . $invoiceFile, "r");
         if ($handle) {
-            $array = [];
+            $array = array();
             while (($line = fgets($handle)) !== false) {
 
                 //CSV line (sku - qty - price)
@@ -81,8 +81,8 @@ class Compare
         $invoiceItemsPriceMismatch_Expensive = array();
         $invoiceItemsMatch = array();
         $invoiceItemsPriceMismatch_Unknown = array();
-	$overChargeTotal = 0;
-	$underChargeTotal = 0;
+	    $overChargeTotal = 0;
+	    $underChargeTotal = 0;
 
         foreach ($invoiceList as $sku => $invoiceItem) {
             if (!isset($masterList[$sku])) {
@@ -132,8 +132,8 @@ class Compare
             $invoiceItemsPriceMismatch_Expensive,
             $invoiceItemsMatch,
             $invoiceItemsPriceMismatch_Unknown,
-	    $overChargeTotal,
-	    $underChargeTotal,
+	        $overChargeTotal,
+	        $underChargeTotal,
         );
 
 
