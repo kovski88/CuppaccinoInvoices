@@ -151,8 +151,8 @@ if (isset($_GET['p']) && $_GET['p'] == "compare") {
 
     $compareClass = new Compare();
     $tryCompare = $compareClass->compare($masterFile, $masterSku, $masterPrice, true, $invoiceFile, $invoiceSku, $invoicePrice, true, $priceThreshold);
-    print_r($tryCompare);
-    //total in invoice, no match, cheaper, expensive, match, unknown
+    //print_r($tryCompare);
+    //total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal
 
     
 }
@@ -194,7 +194,7 @@ foreach (scandir($invoiceLocation) as $item) {
     <input type="file" name="masterFileToUpload" id="masterFileToUpload">
     <br/>
     <div class="advancedOptions">
-	<span>Advanced Options +</span>
+	<span>Advanced +</span>
     </div>
     <div class="hide">
 	<br/>
@@ -222,7 +222,7 @@ foreach (scandir($invoiceLocation) as $item) {
     <input type="file" name="invoiceFileToUpload" id="invoiceFileToUpload">
     <br/>
     <div class="advancedOptions">
-	<span>Advanced Options +</span>
+	<span>Advanced +</span>
     </div>
     <div class="hide">
 	<br/>
@@ -254,7 +254,7 @@ foreach (scandir($invoiceLocation) as $item) {
     <br />
 
     <div class="advancedOptions">
-	<span>Advanced Options +</span>
+	<span>Advanced +</span>
     </div>
     <div class="hide">
     <br/>
@@ -285,7 +285,7 @@ foreach (scandir($invoiceLocation) as $item) {
     <br/>
 
     <div class="advancedOptions">
-	<span>Advanced Options +</span>
+	<span>Advanced +</span>
     </div>
     <div class="hide">
     <br/>
@@ -318,6 +318,35 @@ foreach (scandir($invoiceLocation) as $item) {
     <br/>
     <input type="submit" value="Compare" name="submit">
 </form>
+
+<!--
+//print_r($tryCompare);
+//      0		1	2	3	    4	   5		6		7
+//total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal-->
+<br/>
+<?php
+if(!empty($tryCompare)) {
+	echo "There are {$tryCompare[0]} items in the Invoice <br/>";
+
+	echo "There are " .count($tryCompare[4]) ." items that match prices";
+		if($priceThreshold > 0){
+			echo " - or are in a range of {$priceThreshold}p";
+		}
+	echo "<br/>";
+	
+	echo "There are " .count($tryCompare[2]). " items that are cheaper in the invoice";
+                if(count($tryCompare[2]) > 0){
+                        echo " - total saving {$tryCompare[7]}";
+                }
+        echo "<br/>";
+
+	echo "There are " .count($tryCompare[3]). " items that are more expensive in the invoice";
+                if(count($tryCompare[3]) > 0){
+                        echo " - total overcharge {$tryCompare[6]}";
+                }
+        echo "<br/>"; 
+}
+?>
 
 </body>
 </html>
