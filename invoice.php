@@ -150,11 +150,11 @@ if (isset($_GET['p']) && $_GET['p'] == "compare") {
     $priceThreshold = $_POST['priceThreshold'];
 
     $compareClass = new Compare();
-    $tryCompare = $compareClass->compare($masterFile, $masterSku, $masterPrice, true, $invoiceFile, $invoiceSku, $invoicePrice, true, $priceThreshold);
+    $tryCompare = $compareClass->compareMasterFileToInvoice($masterFile, $masterSku, $masterPrice, true, $invoiceFile, $invoiceSku, $invoicePrice, true, $priceThreshold);
     //print_r($tryCompare);
     //total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal
 
-    
+
 }
 
 $masterLocation = "uploads/master";
@@ -180,9 +180,9 @@ foreach (scandir($invoiceLocation) as $item) {
 
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="assets/invoice.css">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script type="text/javascript" src="/assets/invoice.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/invoice.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="/assets/invoice.js"></script>
 </head>
 <body>
 
@@ -194,11 +194,11 @@ foreach (scandir($invoiceLocation) as $item) {
     <input type="file" name="masterFileToUpload" id="masterFileToUpload">
     <br/>
     <div class="advancedOptions">
-	<span>Advanced +</span>
+        <span>Advanced +</span>
     </div>
     <div class="hide">
-	<br/>
-	Select Master File Extension:
+        <br/>
+        Select Master File Extension:
         <select name="fileType">
             <option value="xlsx:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">XLSX</option>
         </select>
@@ -222,10 +222,10 @@ foreach (scandir($invoiceLocation) as $item) {
     <input type="file" name="invoiceFileToUpload" id="invoiceFileToUpload">
     <br/>
     <div class="advancedOptions">
-	<span>Advanced +</span>
+        <span>Advanced +</span>
     </div>
     <div class="hide">
-	<br/>
+        <br/>
         Select Invoice File Extension:
         <select name="fileType">
             <option value="xlsx:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">XLSX</option>
@@ -254,23 +254,23 @@ foreach (scandir($invoiceLocation) as $item) {
     <br />
 
     <div class="advancedOptions">
-	<span>Advanced +</span>
+        <span>Advanced +</span>
     </div>
     <div class="hide">
-    <br/>
-    SKU COL
-    <select name="masterSku">
-        <?php for ($i=0; $i<=25; $i++) { ?>
-            <option value="<?= $i;?>" <?php if($i==3){ echo "selected";} ?>><?= chr(65 + $i);?></option>
-        <?php } ?>
-    </select>
+        <br/>
+        SKU COL
+        <select name="masterSku">
+            <?php for ($i=0; $i<=25; $i++) { ?>
+                <option value="<?= $i;?>" <?php if($i==3){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+            <?php } ?>
+        </select>
 
-    PRICE COL
-    <select name="masterPrice">
-        <?php for ($i=0; $i<=25; $i++) { ?>
-            <option value="<?= $i;?>" <?php if($i==9){ echo "selected";} ?>><?= chr(65 + $i);?></option>
-        <?php } ?>
-    </select>
+        PRICE COL
+        <select name="masterPrice">
+            <?php for ($i=0; $i<=25; $i++) { ?>
+                <option value="<?= $i;?>" <?php if($i==9){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+            <?php } ?>
+        </select>
     </div>
 
     <br />
@@ -285,23 +285,23 @@ foreach (scandir($invoiceLocation) as $item) {
     <br/>
 
     <div class="advancedOptions">
-	<span>Advanced +</span>
+        <span>Advanced +</span>
     </div>
     <div class="hide">
-    <br/>
-    SKU COL
-    <select name="invoiceSku">
-        <?php for ($i=0; $i<=25; $i++) { ?>
-            <option value="<?= $i;?>" <?php if($i==0){ echo "selected";} ?>><?= chr(65 + $i);?></option>
-        <?php } ?>
-    </select>
+        <br/>
+        SKU COL
+        <select name="invoiceSku">
+            <?php for ($i=0; $i<=25; $i++) { ?>
+                <option value="<?= $i;?>" <?php if($i==0){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+            <?php } ?>
+        </select>
 
-    PRICE COL
-    <select name="invoicePrice">
-        <?php for ($i=0; $i<=25; $i++) { ?>
-            <option value="<?= $i;?>" <?php if($i==7){ echo "selected";} ?>><?= chr(65 + $i);?></option>
-        <?php } ?>
-    </select>
+        PRICE COL
+        <select name="invoicePrice">
+            <?php for ($i=0; $i<=25; $i++) { ?>
+                <option value="<?= $i;?>" <?php if($i==7){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+            <?php } ?>
+        </select>
     </div>
 
     <br/>
@@ -326,25 +326,25 @@ foreach (scandir($invoiceLocation) as $item) {
 <br/>
 <?php
 if(!empty($tryCompare)) {
-	echo "There are {$tryCompare[0]} items in the Invoice <br/>";
+    echo "There are {$tryCompare[0]} items in the Invoice <br/>";
 
-	echo "There are " .count($tryCompare[4]) ." items that match prices";
-		if($priceThreshold > 0){
-			echo " - or are in a range of {$priceThreshold}p";
-		}
-	echo "<br/>";
-	
-	echo "There are " .count($tryCompare[2]). " items that are cheaper in the invoice";
-                if(count($tryCompare[2]) > 0){
-                        echo " - total saving {$tryCompare[7]}";
-                }
-        echo "<br/>";
+    echo "There are " .count($tryCompare[4]) ." items that match prices";
+    if($priceThreshold > 0){
+        echo " - or are in a range of {$priceThreshold}p";
+    }
+    echo "<br/>";
 
-	echo "There are " .count($tryCompare[3]). " items that are more expensive in the invoice";
-                if(count($tryCompare[3]) > 0){
-                        echo " - total overcharge {$tryCompare[6]}";
-                }
-        echo "<br/>"; 
+    echo "There are " .count($tryCompare[2]). " items that are cheaper in the invoice";
+    if(count($tryCompare[2]) > 0){
+        echo " - total saving {$tryCompare[7]}";
+    }
+    echo "<br/>";
+
+    echo "There are " .count($tryCompare[3]). " items that are more expensive in the invoice";
+    if(count($tryCompare[3]) > 0){
+        echo " - total overcharge {$tryCompare[6]}";
+    }
+    echo "<br/>";
 }
 ?>
 

@@ -3,7 +3,7 @@
 class Compare
 {
 
-    public function compare($masterFile, $masterSku, $masterPrice, $masterPound, $invoiceFile, $invoiceSku, $invoicePrice, $invoicePound, $priceDifference = 0)
+    public function compareMasterFileToInvoice($masterFile, $masterSku, $masterPrice, $masterPound, $invoiceFile, $invoiceSku, $invoicePrice, $invoicePound, $priceDifference = 0)
     {
 
         //Read Master list file
