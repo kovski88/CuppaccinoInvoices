@@ -151,7 +151,7 @@ if (isset($_GET['p']) && $_GET['p'] == "compare") {
 
     $compareClass = new Compare();
     $tryCompare = $compareClass->compareMasterFileToInvoice($masterFile, $masterSku, $masterPrice, true, $invoiceFile, $invoiceSku, $invoicePrice, true, $priceThreshold);
-    //print_r($tryCompare);
+    print_r($tryCompare);
     //total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal
 
 
@@ -292,14 +292,14 @@ foreach (scandir($invoiceLocation) as $item) {
         SKU COL
         <select name="invoiceSku">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==0){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==3){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
 
         PRICE COL
         <select name="invoicePrice">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==7){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==9){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
     </div>
@@ -321,12 +321,19 @@ foreach (scandir($invoiceLocation) as $item) {
 
 <!--
 //print_r($tryCompare);
-//      0		1	2	3	    4	   5		6		7
-//total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal-->
+//      0		1	2	3	    4	   5		6		7		8
+//total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal, notInInvTotal-->
 <br/>
 <?php
 if(!empty($tryCompare)) {
     echo "There are {$tryCompare[0]} items in the Invoice <br/>";
+
+    echo "There are " .count($tryCompare[1]) . " items in the Invoice that are not in the master file";
+    if(count($tryCompare[1]) > 0){
+        echo " - total extras {$tryCompare[8]}";
+    }
+
+    echo "<br />";
 
     echo "There are " .count($tryCompare[4]) ." items that match prices";
     if($priceThreshold > 0){

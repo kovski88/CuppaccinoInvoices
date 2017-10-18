@@ -7,6 +7,7 @@ class Compare
     {
 
         //Read Master list file
+	//Assume can only have one unique entry
 
         $masterList = array();
 
@@ -30,6 +31,7 @@ class Compare
         }
 
         //Read Invoice
+	//Can have same SKU on multiple lines!!
 
         $invoiceList = array();
 
@@ -43,7 +45,7 @@ class Compare
 
                 $invoiceAmount = trim(preg_replace('/[^0-9.]+/', '', $array[$invoicePrice]));
                 if(is_numeric($invoiceAmount)){
-                    $invoiceList[trim($array[$invoiceSku])]['price'] = $invoiceAmount; //($array[2]/$array[1]);
+                    $invoiceList[trim($array[$invoiceSku])][]['price'] = $invoiceAmount; //($array[2]/$array[1]);
                 }
             }
             fclose($handle);
@@ -54,6 +56,8 @@ class Compare
 
         $itemsInInvoice = count($invoiceList);
 
+	//die(print_r($invoiceList));
+
         //Compare
 
         $invoiceItemsNotSetInMaster = array();
@@ -63,10 +67,18 @@ class Compare
         $invoiceItemsPriceMismatch_Unknown = array();
         $overChargeTotal = 0;
         $underChargeTotal = 0;
+	$notInInvoiceTotal = 0;
 
-        foreach ($invoiceList as $sku => $invoiceItem) {
+        foreach ($invoiceList as $sku => $invoiceItemArray) {
+
+		//die(print_r($invoiceItemArray));
+
+		foreach($invoiceItemArray as $invoiceItem) {
+
+
             if (!isset($masterList[$sku])) {
-                $invoiceItemsNotSetInMaster[$sku] = $invoiceItem;
+                $invoiceItemsNotSetInMaster[][$sku] = $invoiceItem;
+		$notInInvoiceTotal += $invoiceItem['price'];
             } else {
                 $priceMaster = $masterList[$sku]['price'];
                 $pricePaid = $invoiceItem['price'];
@@ -82,27 +94,31 @@ class Compare
                 if ($pricePaid <= $priceMasterHigh && $pricePaid >= $priceMasterLow) {
                     if($priceDifference > 0)
                     {
-                        $invoiceItemsMatch[$sku] = "Price match or within threshold of {$priceDifference}p";
+                        $invoiceItemsMatch[][$sku] = "Price match or within threshold of {$priceDifference}p";
                     } else {
-                        $invoiceItemsMatch[$sku] = "Price match";
+                        $invoiceItemsMatch[][$sku] = "Price match";
                     }
                 } elseif ($priceMasterHigh < $pricePaid) {
                     //Items in Invoice are more expensive than price master + threshold:
-                    $invoiceItemsPriceMismatch_Expensive[$sku]['text'] = "Master price at $priceMaster but invoiced at $pricePaid";
+		    $c = count($invoiceItemsPriceMismatch_Expensive);
+                    $invoiceItemsPriceMismatch_Expensive[$c][$sku]['text'] = "Master price at $priceMaster but invoiced at $pricePaid";
                     $expensiveDifference = number_format($pricePaid - $priceMaster, 2);
-                    $invoiceItemsPriceMismatch_Expensive[$sku]['diff'] = $expensiveDifference;
+                    $invoiceItemsPriceMismatch_Expensive[$c][$sku]['diff'] = $expensiveDifference;
                     $overChargeTotal += $expensiveDifference;
 
                 } elseif ($priceMasterLow > $pricePaid) {
                     //Item in Invoice are cheaper than price master.
-                    $invoiceItemsPriceMismatch_Cheaper[$sku]['text'] = "Master price at $priceMaster but invoiced at $pricePaid";
+		    $c = count($invoiceItemsPriceMismatch_Cheaper);
+                    $invoiceItemsPriceMismatch_Cheaper[$c][$sku]['text'] = "Master price at $priceMaster but invoiced at $pricePaid";
                     $cheaperDifference = number_format($priceMaster - $pricePaid, 2);
-                    $invoiceItemsPriceMismatch_Cheaper[$sku]['diff'] = $cheaperDifference;
+                    $invoiceItemsPriceMismatch_Cheaper[$c][$sku]['diff'] = $cheaperDifference;
                     $underChargeTotal += $cheaperDifference;
                 } else {
-                    $invoiceItemsPriceMismatch_Unknown[$sku] = "Unknown error";
+		    $c = count($invoiceItemsPriceMismatch_Unknown);
+                    $invoiceItemsPriceMismatch_Unknown[$c][$sku] = "Unknown error";
                 }
             }
+	}
         }
 
         return array(
@@ -114,6 +130,7 @@ class Compare
             $invoiceItemsPriceMismatch_Unknown,
             $overChargeTotal,
             $underChargeTotal,
+	    $notInInvoiceTotal,
         );
 
 
