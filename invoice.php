@@ -138,7 +138,7 @@ if (isset($_GET['p']) && $_GET['p'] == "invoiceUpload") {
 if (isset($_GET['p']) && $_GET['p'] == "compare") {
     require_once dirname(__FILE__) . '/classes/Compare.php';
 
-    //print_r($_POST);
+    print_r($_POST);
     $masterFile = $_POST['masterList'];
     $masterSku = $_POST['masterSku'];
     $masterPrice = $_POST['masterPrice'];
@@ -151,7 +151,7 @@ if (isset($_GET['p']) && $_GET['p'] == "compare") {
 
     $compareClass = new Compare();
     $tryCompare = $compareClass->compareMasterFileToInvoice($masterFile, $masterSku, $masterPrice, true, $invoiceFile, $invoiceSku, $invoicePrice, true, $priceThreshold);
-    print_r($tryCompare);
+    //print_r($tryCompare);
     //total in invoice, no match, cheaper, expensive, match, unknown, overchargeTotal, underChargeTotal
 
 
@@ -246,9 +246,10 @@ foreach (scandir($invoiceLocation) as $item) {
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>?p=compare" method="post" enctype="multipart/form-data">
     Select Master Price List File:
+    <?php $point = isset($_POST['masterList']) ? $_POST['masterList'] : null; ?>
     <select name="masterList">
         <?php foreach($masterLocationCSV as $key => $masterCSV) { ?>
-            <option value="<?= $masterCSV?>"><?= $masterCSV ?></option>
+            <option value="<?= $masterCSV?>" <?php if($masterCSV == $point){ echo "selected";} ?>><?= $masterCSV ?></option>
         <?php } ?>
     </select>
     <br />
@@ -259,16 +260,18 @@ foreach (scandir($invoiceLocation) as $item) {
     <div class="hide">
         <br/>
         SKU COL
+	<?php $point = isset($_POST['masterSku']) ? $_POST['masterSku'] : 3; ?>
         <select name="masterSku">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==3){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==$point){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
 
         PRICE COL
+	<?php $point = isset($_POST['masterPrice']) ? $_POST['masterPrice'] : 9; ?>
         <select name="masterPrice">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==9){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==$point){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
     </div>
@@ -277,9 +280,10 @@ foreach (scandir($invoiceLocation) as $item) {
     <br />
 
     Select Invoice File:
+    <?php $point = isset($_POST['invoiceList']) ? $_POST['invoiceList'] : null; ?>
     <select name="invoiceList">
         <?php foreach($invoiceLocationCSV as $key => $invoiceCSV) { ?>
-            <option value="<?= $invoiceCSV?>"><?= $invoiceCSV ?></option>
+            <option value="<?= $invoiceCSV?>" <?php if($invoiceCSV==$point){ echo "selected";} ?>><?= $invoiceCSV ?></option>
         <?php } ?>
     </select>
     <br/>
@@ -290,16 +294,18 @@ foreach (scandir($invoiceLocation) as $item) {
     <div class="hide">
         <br/>
         SKU COL
+	<?php $point = isset($_POST['invoiceSku']) ? $_POST['invoiceSku'] : 3; ?>
         <select name="invoiceSku">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==3){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==$point){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
 
         PRICE COL
+	<?php $point = isset($_POST['invoicePrice']) ? $_POST['invoicePrice'] : 9; ?>
         <select name="invoicePrice">
             <?php for ($i=0; $i<=25; $i++) { ?>
-                <option value="<?= $i;?>" <?php if($i==9){ echo "selected";} ?>><?= chr(65 + $i);?></option>
+                <option value="<?= $i;?>" <?php if($i==$point){ echo "selected";} ?>><?= chr(65 + $i);?></option>
             <?php } ?>
         </select>
     </div>
@@ -308,9 +314,10 @@ foreach (scandir($invoiceLocation) as $item) {
     <br />
 
     PRICE THRESHOLD (PENCE)
+    <?php $point = isset($_POST['priceThreshold']) ? $_POST['priceThreshold'] : 2; ?>
     <select name="priceThreshold">
         <?php for ($i=0; $i<=99; $i++) { ?>
-            <option value="<?= $i;?>" <?php if($i==2){ echo "selected";} ?>><?= $i;?></option>
+            <option value="<?= $i;?>" <?php if($i==$point){ echo "selected";} ?>><?= $i;?></option>
         <?php } ?>
     </select>
 
